@@ -18,7 +18,7 @@ export default function Map() {
   const [directions, setDirections] = useState<DirectionsResult>();
   const mapRef = useRef<GoogleMap>();
   const center = useMemo<LatLngLiteral>(
-    () => ({ lat: 43.45, lng: -80.49 }),
+    () => ({ lat: -30.0277, lng: -51.2287 }),
     []
   );
   const options = useMemo<MapOptions>(
@@ -29,12 +29,13 @@ export default function Map() {
     }),
     []
   );
+  // let iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
+
   const onLoad = useCallback((map) => (mapRef.current = map), []);
   const houses = useMemo(() => generateHouses(center), [center]);
 
   const fetchDirections = (house: LatLngLiteral) => {
     if (!office) return;
-
     const service = new google.maps.DirectionsService();
     service.route(
       {
@@ -53,14 +54,14 @@ export default function Map() {
   return (
     <div className="container">
       <div className="controls">
-        <h1>Commute?</h1>
+        <h1>Trajeto...</h1>
         <Places
           setOffice={(position) => {
             setOffice(position);
             mapRef.current?.panTo(position);
           }}
         />
-        {!office && <p>Enter the address of your office.</p>}
+        {!office && <p>Insira o endereço de um contato.</p>}
         {directions && <Distance leg={directions.routes[0].legs[0]} />}
       </div>
       <div className="map">
@@ -88,7 +89,8 @@ export default function Map() {
             <>
               <Marker
                 position={office}
-                icon="https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+                // icon="https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+                icon="/crosshair.png"
               />
 
               <MarkerClusterer>
@@ -106,8 +108,11 @@ export default function Map() {
                 }
               </MarkerClusterer>
 
+              {/* 15 km */}
               <Circle center={office} radius={15000} options={closeOptions} />
+              {/* 30 km */}
               <Circle center={office} radius={30000} options={middleOptions} />
+              {/* 45 km */}
               <Circle center={office} radius={45000} options={farOptions} />
             </>
           )}
